@@ -1,16 +1,17 @@
 import User from '@/models/schemas/User.schema'
 import databaseService from './database.services'
+import { RegisterReqBody } from '@/models/requests/Users.requests'
 
 class UsersService {
   constructor() {}
-  async register(payload: { email: string; password: string }) {
-    const { email, password } = payload
+  async register(payload: RegisterReqBody) {
     const result = await databaseService.users.insertOne(
-      new User({
-        email,
-        password
-      })
+      new User({ ...payload, date_of_birth: new Date(payload.date_of_birth) })
     )
+    return result
+  }
+  async isExitedEmail(email: string) {
+    const result = await databaseService.users.findOne({ email })
     return result
   }
 }

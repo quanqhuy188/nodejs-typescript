@@ -1,5 +1,5 @@
-import User from '@/models/schemas/User.schema'
-import databaseService from '@/services/database.services'
+import { RegisterReqBody } from '@/models/requests/Users.requests'
+import { ParamsDictionary } from 'express-serve-static-core'
 import usersService from '@/services/users.services'
 import { Request, Response } from 'express'
 export const loginController = (req: Request, res: Response) => {
@@ -13,10 +13,10 @@ export const loginController = (req: Request, res: Response) => {
     message: 'Login failed'
   })
 }
-export const registerController = async (req: Request, res: Response) => {
-  const { email, password } = req.body
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const registerController = async (req: Request<ParamsDictionary, any, RegisterReqBody>, res: Response) => {
   try {
-    const result = await usersService.register({ email, password })
+    const result = await usersService.register(req.body)
     res.status(200).json({
       message: 'success',
       data: result
