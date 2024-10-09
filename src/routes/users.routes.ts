@@ -37,5 +37,19 @@ usersRouter.post(
   validateResults,
   wrapRequestHandler(logoutController)
 )
+/*
+ * Description: logout user
+ * Path /logout
+ * Method: POST
+ * Header : {Authorization: Bearer <access_token>}
+ * Body:{refresh_token:string}
+ */
+usersRouter.post(
+  '/verify-email',
+  accessTokenValidator,
+  refreshTokenValidator,
+  validateResults,
+  wrapRequestHandler(logoutController)
+)
 
 export default usersRouter
