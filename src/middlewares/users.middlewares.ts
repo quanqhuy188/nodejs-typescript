@@ -1,24 +1,57 @@
+import { HTTP_STATUS } from '@/constants/httpStatus'
+import { USERS_MESSAGES } from '@/constants/messages'
+import { EntityError, ErrorWithStatus } from '@/models/Errors'
 import usersService from '@/services/users.services'
+import { comparePassword } from '@/utils/crypto'
 import { Request, Response, NextFunction } from 'express'
 import { checkSchema, validationResult } from 'express-validator'
 
-export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body
-  if (!email || !password) {
-    res.status(400).json({
-      error: 'Missing Enmail or Password'
-    })
+export const loginValidator = checkSchema({
+  email: {
+    notEmpty: {
+      errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
+    },
+    isEmail: {
+      errorMessage: USERS_MESSAGES.INVALID_EMAIL
+    },
+    trim: true
+  },
+  password: {
+    notEmpty: {
+      errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
+    },
+    isString: {
+      errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+    },
+    isStrongPassword: {
+      errorMessage: USERS_MESSAGES.WEAK_PASSWORD,
+      options: {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+        pointsPerUnique: 1,
+        pointsPerRepeat: 0.5,
+        pointsForContainingLower: 10,
+        pointsForContainingUpper: 10,
+        pointsForContainingNumber: 10,
+        pointsForContainingSymbol: 10
+      }
+    }
   }
-  next()
-}
+})
 export const registerValidator = checkSchema({
   name: {
     notEmpty: {
-      errorMessage: 'Tên không được để trống'
+      errorMessage: USERS_MESSAGES.NAME_IS_REQUIRED
     },
-    isString: true,
+    isString: {
+      errorMessage: USERS_MESSAGES.NAME_MUST_BE_A_STRING
+    },
     isLength: {
-      errorMessage: 'Không được vượt quá 50 ký tự',
+      errorMessage: USERS_MESSAGES.NAME_LENGTH,
       options: {
         min: 1,
         max: 50
@@ -28,26 +61,22 @@ export const registerValidator = checkSchema({
   },
   email: {
     notEmpty: {
-      errorMessage: 'Tên không được để trống'
+      errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
     },
-    isEmail: true,
-    trim: true,
-    custom: {
-      options: async (value, { req }) => {
-        const isExitedEmail = await usersService.isExitedEmail(value)
-        if (isExitedEmail) {
-          throw new Error('Email đã tồn tại')
-        }
-      }
-    }
+    isEmail: {
+      errorMessage: USERS_MESSAGES.INVALID_EMAIL
+    },
+    trim: true
   },
   password: {
     notEmpty: {
-      errorMessage: 'Không được vượt quá 50 ký tự'
+      errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
     },
-    isString: true,
+    isString: {
+      errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+    },
     isStrongPassword: {
-      errorMessage: 'Không được vượt quá 50 ký tự',
+      errorMessage: USERS_MESSAGES.WEAK_PASSWORD,
       options: {
         minLength: 8,
         minLowercase: 1,
@@ -66,19 +95,24 @@ export const registerValidator = checkSchema({
   },
   confirm_password: {
     notEmpty: {
-      errorMessage: 'Không được vượt quá 50 ký tự'
+      errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
     },
-    isString: true,
+    isString: {
+      errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+    },
     custom: {
       options: (value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error('Mật khẩu không trùng khớp')
+          throw new ErrorWithStatus({
+            message: USERS_MESSAGES.PASSWORDS_DO_NOT_MATCH,
+            status: HTTP_STATUS.BAD_REQUEST
+          })
         }
         return true
       }
     },
     isStrongPassword: {
-      errorMessage: 'Không được vượt quá 50 ký tự',
+      errorMessage: USERS_MESSAGES.WEAK_PASSWORD,
       options: {
         minLength: 8,
         minLowercase: 1,
@@ -97,7 +131,7 @@ export const registerValidator = checkSchema({
   },
   date_of_birth: {
     isISO8601: {
-      errorMessage: 'Không được vượt quá 50 ký tự',
+      errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_INVALID,
       options: {
         strict: true,
         strictSeparator: true
@@ -108,11 +142,18 @@ export const registerValidator = checkSchema({
 
 export const validateResults = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
-  console.log(errors.array())
-
-  if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.mapped() }) // Gửi phản hồi lỗi
-  } else {
+  if (errors.isEmpty()) {
     next()
+  } else {
+    const errorsObject = errors.mapped()
+    const entityError = new EntityError({ errors: {} })
+    for (const key in errorsObject) {
+      const { msg } = errorsObject[key]
+      if (msg instanceof ErrorWithStatus && msg.status !== HTTP_STATUS.UNPROCESSABLE_ENTITY) {
+        next(msg)
+      }
+      entityError.errors[key] = errorsObject[key]
+    }
+    next(entityError)
   }
 }
