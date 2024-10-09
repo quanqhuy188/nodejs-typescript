@@ -9,3 +9,8 @@ export interface LoginReqBody {
   email: string
   password: string
 }
+
+export interface LogoutReqBody {
+  access_token: string
+  refresh_token: string
+}

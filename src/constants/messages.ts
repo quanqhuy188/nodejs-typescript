@@ -1,6 +1,9 @@
 export const USERS_MESSAGES = {
-  LOGIN_SUCCESS: 'Login success',
-  REGISTER_SUCCESS: 'Register success',
+  SUCCESS: 'Thành công',
+  LOGIN_SUCCESS: 'Đăng nhập thành công',
+  LOGOUT_SUCCESS: 'Đăng xuất thành công',
+  LOGIN_FAILED: 'Đăng nhập thất bại',
+  REGISTER_SUCCESS: 'Đăng ký thành công',
 
   VALIDATION_ERROR: 'Lỗi xác thực',
 
@@ -19,5 +22,13 @@ export const USERS_MESSAGES = {
     'Mật khẩu không đủ mạnh. Mật khẩu cần có ít nhất 8 ký tự, bao gồm chữ thường, chữ hoa, số và ký tự đặc biệt.',
   PASSWORDS_DO_NOT_MATCH: 'Mật khẩu xác nhận không khớp',
 
-  DATE_OF_BIRTH_INVALID: 'Ngày sinh không hợp lệ. Vui lòng nhập ngày theo định dạng YYYY-MM-DD.'
+  DATE_OF_BIRTH_INVALID: 'Ngày sinh không hợp lệ. Vui lòng nhập ngày theo định dạng YYYY-MM-DD.',
+
+  REQUIRED_ACCESS_TOKEN: 'Access token không được để trống',
+  REQUIRED_REFRESH_TOKEN: 'Refresh token không được để trống',
+
+  INVALID_TOKEN: 'Token không hợp lệ',
+  NOT_FOUND_REFRESH_TOKEN: 'Token không tồn tại',
+  TOKEN_NOT_ACTIVE_YET: 'Token chưa được sử dụng',
+  TOKEN_EXPIRED: 'Token đã hết hạn'
 } as const

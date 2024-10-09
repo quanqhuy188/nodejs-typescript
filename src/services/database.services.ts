@@ -1,33 +1,11 @@
 import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb'
-import dotenv from 'dotenv'
+import dotenv, { config } from 'dotenv'
 import User from '@/models/schemas/User.schema'
 import RefreshToken from '@/models/schemas/RefreshToken.schema'
-dotenv.config()
+config()
 
 const uri: string = process.env.DB_URL || ''
 
-// const client = new MongoClient(uri, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true
-//   }
-// })
-
-// export async function connectDB() {
-//   try {
-//     // Send a ping to confirm a successful connection
-//     await client.db('twitter-dev').command({ ping: 1 })
-//     console.log('Pinged your deployment. You successfully connected to MongoDB!')
-//   } catch (error) {
-//     console.error('An error occurred while connecting to MongoDB:', error)
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     await client.close()
-//   }
-// }
-
-// ====> CONVERT TO CLASS
 class DatabaseService {
   private client: MongoClient
   private db: Db

@@ -1,14 +1,11 @@
-import { LoginReqBody, RegisterReqBody } from '@/models/requests/Users.requests'
+import { LoginReqBody, LogoutReqBody, RegisterReqBody } from '@/models/requests/Users.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersService from '@/services/users.services'
 import { Request, Response, NextFunction } from 'express'
-import User from '@/models/schemas/User.schema'
-import { ObjectId } from 'mongodb'
-import { USERS_MESSAGES } from '@/constants/messages'
-export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
-  const { email, password } = req.body
 
-  const result = await usersService.login(req.body)
+import authService from '@/services/auth.services'
+export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
+  const result = await authService.login(req.body)
   res.status(result.status).json(result)
 }
 
@@ -18,8 +15,14 @@ export const registerController = async (
   next: NextFunction
 ) => {
   const result = await usersService.register(req.body)
-  res.status(200).json({
-    message: USERS_MESSAGES.REGISTER_SUCCESS,
-    data: result
-  })
+  res.status(result.status).json(result)
+}
+
+export const logoutController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
+  const payload: LogoutReqBody = {
+    access_token: req.headers.authorization || '',
+    refresh_token: req.body.refresh_token || ''
+  }
+  const result = await authService.logout(payload)
+  res.status(result.status).json(result)
 }
