@@ -1,6 +1,5 @@
 import { LoginReqBody, LogoutReqBody, RegisterReqBody } from '@/models/requests/Users.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
-import usersService from '@/services/usersService'
 import { Request, Response, NextFunction } from 'express'
 import authService from '@/services/authService'
 import tokenService from '@/services/tokenService'
