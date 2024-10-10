@@ -1,5 +1,8 @@
 export const USERS_MESSAGES = {
   SUCCESS: 'Thành công',
+  VERIFIED_USER: 'Tài khoản đã kích hoạt',
+  UNVERIFIED_USER: 'Tài khoản chưa được kích hoạt',
+  BANNED_USER: 'Tài khoản đã bị khoá',
   LOGIN_SUCCESS: 'Đăng nhập thành công',
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
   LOGIN_FAILED: 'Đăng nhập thất bại',
@@ -30,5 +33,6 @@ export const USERS_MESSAGES = {
   INVALID_TOKEN: 'Token không hợp lệ',
   NOT_FOUND_REFRESH_TOKEN: 'Token không tồn tại',
   TOKEN_NOT_ACTIVE_YET: 'Token chưa được sử dụng',
-  TOKEN_EXPIRED: 'Token đã hết hạn'
+  TOKEN_EXPIRED: 'Token đã hết hạn',
+  USER_NOTFOUND: 'Thông tin người dùng không tồn tại'
 } as const

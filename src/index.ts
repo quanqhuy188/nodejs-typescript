@@ -1,7 +1,7 @@
-import usersRouter from '@/routes/users.routes'
 import express from 'express'
-import databaseService from '@/services/database.services'
-import { defaultErrorHandler } from './middlewares/error.middlewares'
+import databaseService from '@/services/databaseService'
+import { defaultErrorHandler } from './middlewares/defaultErrorHandler'
+import usersRouter from './routes/usersRoutes'
 
 const app = express()
 const port = 8080

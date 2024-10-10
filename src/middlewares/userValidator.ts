@@ -1,9 +1,7 @@
 import { HTTP_STATUS } from '@/constants/httpStatus'
 import { USERS_MESSAGES } from '@/constants/messages'
 import { ResponseWrapper } from '@/models/response/ResponseWrapper'
-
-import { Request, Response, NextFunction } from 'express'
-import { checkSchema, validationResult } from 'express-validator'
+import { checkSchema } from 'express-validator'
 
 export const loginValidator = checkSchema(
   {
@@ -161,7 +159,16 @@ export const accessTokenValidator = checkSchema(
 
   ['headers']
 )
-
+export const queryTokenValidator = checkSchema(
+  {
+    token: {
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.REQUIRED_ACCESS_TOKEN
+      }
+    }
+  },
+  ['query']
+)
 export const refreshTokenValidator = checkSchema(
   {
     refresh_token: {
@@ -173,25 +180,14 @@ export const refreshTokenValidator = checkSchema(
 
   ['body']
 )
-export const validateResults = (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req)
-
-  if (errors.isEmpty()) {
-    return next()
-  }
-
-  const errorsObject = errors.mapped()
-  const errorResponses: Record<string, { msg: string }> = {}
-
-  for (const key in errorsObject) {
-    const { msg } = errorsObject[key]
-
-    if (typeof msg === 'string') {
-      errorResponses[key] = { msg }
-    } else if (msg instanceof ResponseWrapper) {
-      errorResponses[key] = { msg: msg.message }
+export const forgotPasswordValidator = checkSchema(
+  {
+    email: {
+      notEmpty: {
+        errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
+      }
     }
-  }
-  const responseError = ResponseWrapper.error(USERS_MESSAGES.VALIDATION_ERROR, HTTP_STATUS.BAD_REQUEST, errorResponses)
-  return next(responseError)
-}
+  },
+
+  ['body']
+)
