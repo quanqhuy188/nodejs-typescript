@@ -1,4 +1,4 @@
-import { LoginReqBody, LogoutReqBody, RegisterReqBody } from '@/models/requests/Users.requests'
+import { LoginReqBody, LogoutReqBody, RegisterReqBody, ResetPasswordReqBody } from '@/models/requests/Users.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { Request, Response, NextFunction } from 'express'
 import authService from '@/services/authService'
@@ -45,5 +45,14 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
 export const verifyForgotPasswordController = async (req: Request, res: Response) => {
   const token = (req.query.token as string) || ''
   const result = await tokenService.verifyForgotPasswordToken(token)
+  res.status(result.status).json(result)
+}
+export const resetPasswordController = async (req: Request, res: Response) => {
+  const payload: ResetPasswordReqBody = {
+    new_password: req.body.new_password,
+    new_confirm_password: req.body.new_confirm_password,
+    token: (req.query.token as string) || ''
+  }
+  const result = await tokenService.verifyResetPasswordToken(payload)
   res.status(result.status).json(result)
 }

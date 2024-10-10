@@ -191,3 +191,68 @@ export const forgotPasswordValidator = checkSchema(
 
   ['body']
 )
+export const resetPasswordValidator = checkSchema({
+  new_password: {
+    notEmpty: {
+      errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
+    },
+    isString: {
+      errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+    },
+    isStrongPassword: {
+      errorMessage: USERS_MESSAGES.WEAK_PASSWORD,
+      options: {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+        pointsPerUnique: 1,
+        pointsPerRepeat: 0.5,
+        pointsForContainingLower: 10,
+        pointsForContainingUpper: 10,
+        pointsForContainingNumber: 10,
+        pointsForContainingSymbol: 10
+      }
+    }
+  },
+  new_confirm_password: {
+    notEmpty: {
+      errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
+    },
+    isString: {
+      errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+    },
+    custom: {
+      options: (value, { req }) => {
+        if (value !== req.body.new_password) {
+          throw ResponseWrapper.error(USERS_MESSAGES.PASSWORDS_DO_NOT_MATCH, HTTP_STATUS.BAD_REQUEST)
+        }
+        return true
+      }
+    },
+    isStrongPassword: {
+      errorMessage: USERS_MESSAGES.WEAK_PASSWORD,
+      options: {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        returnScore: false,
+        pointsPerUnique: 1,
+        pointsPerRepeat: 0.5,
+        pointsForContainingLower: 10,
+        pointsForContainingUpper: 10,
+        pointsForContainingNumber: 10,
+        pointsForContainingSymbol: 10
+      }
+    }
+  },
+  token: {
+    notEmpty: {
+      errorMessage: USERS_MESSAGES.REQUIRED_ACCESS_TOKEN
+    }
+  }
+})

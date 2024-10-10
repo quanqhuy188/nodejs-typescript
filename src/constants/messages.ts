@@ -34,5 +34,7 @@ export const USERS_MESSAGES = {
   NOT_FOUND_REFRESH_TOKEN: 'Token không tồn tại',
   TOKEN_NOT_ACTIVE_YET: 'Token chưa được sử dụng',
   TOKEN_EXPIRED: 'Token đã hết hạn',
-  USER_NOTFOUND: 'Thông tin người dùng không tồn tại'
+  LINK_EXPIRED: 'Đường dẫn đã hết hạn',
+  USER_NOTFOUND: 'Thông tin người dùng không tồn tại',
+  CANT_NOT_CHANGE_PASSWORD: 'Không thể thay đổi mật khẩu'
 } as const

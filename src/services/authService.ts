@@ -57,10 +57,6 @@ class AuthService {
     if (!refresh_token) {
       throw ResponseWrapper.error(USERS_MESSAGES.NOT_FOUND_REFRESH_TOKEN, HTTP_STATUS.CONFLICT)
     }
-    console.log(decoded_access)
-    console.log(decoded_refresh)
-    console.log(refresh_token)
-    //Delete refresh token
     const result = await databaseService.refreshTokens.deleteOne({ token: refresh_token.token })
     return ResponseWrapper.success(result, USERS_MESSAGES.LOGOUT_SUCCESS, HTTP_STATUS.OK)
   }
@@ -108,13 +104,14 @@ class AuthService {
     }
     //Update verify token for user
     const result = await emailService.sendForgotPasswordEmail(user._id.toString(), email, user.name)
-    console.log(result)
+
     await databaseService.users.updateOne(
       { _id: user._id },
       { $set: { forgot_password_token: result }, $currentDate: { updated_at: true } }
     )
     return ResponseWrapper.success(result, USERS_MESSAGES.SUCCESS, HTTP_STATUS.OK)
   }
+  async resetPassword() {}
 }
 
 const authService = new AuthService()
