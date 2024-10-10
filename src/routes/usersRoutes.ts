@@ -15,8 +15,8 @@ import {
   queryTokenValidator,
   forgotPasswordValidator
 } from '@/middlewares/userValidator'
-import { wrapRequestHandler } from '@/utils/handlers'
-import { validateResults } from '@/utils/validateResults'
+import { wrapRequestHandler } from '@/helpers/handlers'
+import { validateResults } from '@/helpers/validateResults'
 import { Router } from 'express'
 const usersRouter = Router()
 /*

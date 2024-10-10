@@ -6,7 +6,7 @@ import { USERS_MESSAGES } from '@/constants/messages'
 import { HTTP_STATUS } from '@/constants/httpStatus'
 import RefreshToken from '@/models/schemas/RefreshToken.schema'
 
-import { comparePassword, hashPassword } from '@/utils/crypto'
+import { comparePassword, hashPassword } from '@/helpers/crypto'
 import tokenService from './tokenService'
 import { UserVerifyStatus } from '@/constants/enum'
 import User from '@/models/schemas/User.schema'

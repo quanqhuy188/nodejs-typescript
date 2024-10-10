@@ -1,4 +1,4 @@
-import { signToken, verifyToken } from '@/utils/jwt'
+import { signToken, verifyToken } from '@/helpers/jwt'
 import { TokenType, UserVerifyStatus } from '@/constants/enum'
 import { USERS_MESSAGES } from '@/constants/messages'
 import { HTTP_STATUS } from '@/constants/httpStatus'
