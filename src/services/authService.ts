@@ -49,11 +49,7 @@ class AuthService {
   }
 
   async logout(payload: LogoutReqBody) {
-    const [[decoded_access, decoded_refresh], refresh_token] = await Promise.all([
-      tokenService.verifyAccessTokenAndRefreshToken(payload.access_token, payload.refresh_token),
-      databaseService.refreshTokens.findOne({ token: payload.refresh_token })
-    ])
-
+    const refresh_token = await databaseService.refreshTokens.findOne({ token: payload.refresh_token })
     if (!refresh_token) {
       throw ResponseWrapper.error(USERS_MESSAGES.NOT_FOUND_REFRESH_TOKEN, HTTP_STATUS.CONFLICT)
     }
@@ -65,12 +61,10 @@ class AuthService {
     if (!hashedPassword) {
       throw ResponseWrapper.error(USERS_MESSAGES.PASSWORDS_DO_NOT_MATCH, HTTP_STATUS.BAD_REQUEST)
     }
-
     const user = await databaseService.users.findOne({ email: payload.email })
     if (user) {
       throw ResponseWrapper.error(USERS_MESSAGES.EMAIL_TAKEN, HTTP_STATUS.CONFLICT)
     }
-
     const result = await databaseService.users.insertOne(
       new User({
         ...payload,
@@ -80,17 +74,16 @@ class AuthService {
     )
     const user_id = result.insertedId.toString()
     const [access_token, refresh_token] = await tokenService.signAccessTokenAndRefreshToken(user_id)
-
     // Lưu token vào database
-    await databaseService.refreshTokens.insertOne(
-      new RefreshToken({
-        user_id: new ObjectId(user_id),
-        token: refresh_token
-      })
-    )
-    //Send email Verify
-    await emailService.sendVerificationEmail(user_id, payload.email, payload.email)
-
+    Promise.all([
+      await databaseService.refreshTokens.insertOne(
+        new RefreshToken({
+          user_id: new ObjectId(user_id),
+          token: refresh_token
+        })
+      ),
+      await emailService.sendVerificationEmail(user_id, payload.email, payload.email)
+    ])
     const data = {
       access_token,
       refresh_token

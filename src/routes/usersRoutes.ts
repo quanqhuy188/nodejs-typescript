@@ -6,20 +6,20 @@ import {
   resendVerifyEmailController,
   forgotPasswordController,
   verifyForgotPasswordController,
-  resetPasswordController
+  resetPasswordController,
+  meController
 } from '@/controllers/usersController'
 import {
   loginValidator,
   registerValidator,
-  accessTokenValidator,
-  refreshTokenValidator,
-  queryTokenValidator,
   forgotPasswordValidator,
-  resetPasswordValidator
+  resetPasswordValidator,
+  logoutValidator
 } from '@/middlewares/userValidator'
 import { wrapRequestHandler } from '@/helpers/handlers'
 import { validateResults } from '@/helpers/validateResults'
 import { Router } from 'express'
+import { accessTokenValidator, refreshTokenValidator, queryTokenValidator } from '@/middlewares/authValidator'
 const usersRouter = Router()
 /*
  * Description: Login user
@@ -42,13 +42,7 @@ usersRouter.post('/register', registerValidator, validateResults, wrapRequestHan
  * Header : {Authorization: Bearer <access_token>}
  * Body:{refresh_token:string}
  */
-usersRouter.post(
-  '/logout',
-  accessTokenValidator,
-  refreshTokenValidator,
-  validateResults,
-  wrapRequestHandler(logoutController)
-)
+usersRouter.post('/logout', logoutValidator, validateResults, wrapRequestHandler(logoutController))
 /*
  * Description: verify-email user
  * Path /verify-email
@@ -100,5 +94,6 @@ usersRouter.post(
   validateResults,
   wrapRequestHandler(resetPasswordController)
 )
+usersRouter.get('/me', accessTokenValidator, validateResults, wrapRequestHandler(meController))
 
 export default usersRouter

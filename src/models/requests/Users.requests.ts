@@ -1,3 +1,6 @@
+import { JwtPayload } from 'jsonwebtoken'
+import User from '../schemas/User.schema'
+
 export interface RegisterReqBody {
   name: string
   email: string
@@ -16,6 +19,6 @@ export interface LogoutReqBody {
 }
 export interface ResetPasswordReqBody {
   new_password: string
-  new_confirm_password: string
-  token: string
+  user: User
+  decode: JwtPayload
 }

@@ -29,4 +29,11 @@ export class ResponseWrapper<T = any> {
   static error(message: string, status: number, errors?: ErrorsType): ResponseWrapper<null> {
     return new ResponseWrapper({ status, message, errors })
   }
+  static errorSystem(err: any): ResponseWrapper<null> {
+    return {
+      message: 'Error System',
+      status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      errors: err
+    }
+  }
 }
