@@ -97,3 +97,22 @@ export const meController = async (req: Request, res: Response) => {
     res.status(500).json(error)
   }
 }
+export const updateMeController = async (req: Request, res: Response) => {
+  try {
+    // const result = await userService.getMe((req.decode as JwtPayload).user_id)
+    // res.status(result.status).json(result)
+    res.status(200).json('OK')
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
+export const oauthController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  try {
+    const result = await authService.oauth(code as string)
+
+    res.status(result.status).json(result)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}

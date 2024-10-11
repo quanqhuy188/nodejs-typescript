@@ -15,11 +15,12 @@ import User from '@/models/schemas/User.schema'
 config()
 
 class TokenService {
-  handleSignToken(user_id: string, token_type: TokenType, expiresIn: string) {
+  handleSignToken(user_id: string, token_type: TokenType, expiresIn: string, verify?: UserVerifyStatus) {
     return signToken({
       payload: {
         user_id,
-        token_type
+        token_type,
+        verify
       },
       options: {
         expiresIn
@@ -65,10 +66,10 @@ class TokenService {
     return ResponseWrapper.success(result, USERS_MESSAGES.SUCCESS, HTTP_STATUS.OK)
   }
 
-  signAccessTokenAndRefreshToken(user_id: string) {
+  signAccessTokenAndRefreshToken(user_id: string, verify: UserVerifyStatus) {
     return Promise.all([
-      this.handleSignToken(user_id, TokenType.AccessToken, process.env.ACCESS_TOKEN_EXPIRES_IN as string),
-      this.handleSignToken(user_id, TokenType.RefreshToken, process.env.REFRESH_TOKEN_EXPIRES_IN as string)
+      this.handleSignToken(user_id, TokenType.AccessToken, process.env.ACCESS_TOKEN_EXPIRES_IN as string, verify),
+      this.handleSignToken(user_id, TokenType.RefreshToken, process.env.REFRESH_TOKEN_EXPIRES_IN as string, verify)
     ])
   }
 
